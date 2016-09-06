@@ -1,0 +1,67 @@
+{
+  "name": "Customer",
+  "plural": "customers",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "settings": {
+    "mongodb": {
+      "allowExtendedOperators": true
+    }
+  },
+  "mixins": {
+    "TimeStamp": true,
+    "Stats": [
+      {
+        "method": "customerOrderStats",
+        "endpoint": "/:id/orders/number-stats",
+        "type": "relation",
+        "relation": "orders",
+        "count": {
+          "on": "createdAt",
+          "by": "index"
+        }
+      },
+      {
+        "method": "customerIncomeStats",
+        "endpoint": "/:id/orders/income-stats",
+        "type": "relation",
+        "relation": "orders",
+        "count": {
+          "on": "createdAt",
+          "by": "amount"
+        }
+      }
+    ],
+    "StatsWrapper": [
+      {
+        "method": "customerStatsWrapper",
+        "endpoint": "/:id/stats",
+        "type": "relation",
+        "relation": "orders",
+        "wraps": [
+          "customerOrderStats",
+          "customerIncomeStats"
+        ]
+      }
+    ]
+  },
+  "properties": {
+    "name": {
+      "type": "string",
+      "required": false
+    }
+  },
+  "validations": [],
+  "relations": {
+    "orders": {
+      "type": "hasMany",
+      "model": "Order",
+      "foreignKey": ""
+    }
+  },
+  "acls": [],
+  "methods": {}
+}
